@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haunted Bash 2026 - RSVP & Tickets</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        spookyDark: '#0a0612',
+                        neonPurple: '#9333ea',
+                        neonOrange: '#f97316',
+                        slimeGreen: '#22c55e',
+                    },
+                    fontFamily: {
+                        creepster: ['Creepster', 'cursive', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts for Spooky Theme -->
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Razorpay Checkout Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #f3f4f6;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* Fullscreen Video Background */
+        .bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -3;
+        }
+
+        /* 4-Corner Vignette Shadow Overlay */
+        .vignette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(5, 3, 10, 0.2) 20%, rgba(5, 3, 10, 0.85) 90%),
+                        linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.9));
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9), inset 0 0 150px rgba(10, 6, 18, 0.8);
+        }
+
+        /* Foggy Atmosphere Layer */
+        .fog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            background: linear-gradient(0deg, rgba(147, 51, 234, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%);
+            backdrop-filter: blur(1px);
+        }
+
+        .spooky-title {
+            font-family: 'Creepster', cursive;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(147, 51, 234, 0.9), 0 0 30px rgba(249, 115, 22, 0.7);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .float-slow { animation: float 5s ease-in-out infinite; }
+        .float-delayed { animation: float 7s ease-in-out 2s infinite; }
+        
+        .spooky-glow {
+            box-shadow: 0 0 25px rgba(147, 51, 234, 0.4), inset 0 0 15px rgba(249, 115, 22, 0.15);
+        }
+    </style>
+</head>
+<body class="relative flex flex-col justify-between selection:bg-neonOrange selection:text-white">
+
+    <!-- Video Background -->
+    <video autoplay muted loop playsinline class="bg-video">
+        <source src="background-video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Corner Vignette & Shadows Overlay -->
+    <div class="vignette-overlay"></div>
+
+    <!-- Foggy Atmosphere Layer -->
+    <div class="fog-overlay"></div>
+
+    <!-- Background Spooky Floating Elements -->
+    <div class="absolute top-10 left-5 text-4xl opacity-40 float-slow pointer-events-none">🦇</div>
+    <div class="absolute top-40 right-6 text-5xl opacity-30 float-delayed pointer-events-none">👻</div>
+    <div class="absolute bottom-32 left-10 text-5xl opacity-30 float-slow pointer-events-none">🎃</div>
+    <div class="absolute top-1/2 right-4 text-4xl opacity-35 float-delayed pointer-events-none">🕷️</div>
+
+    <!-- Custom Spooky Background Audio Track -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="soulfuljamtracks-happy-halloween-612355.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Header / Hero Section -->
+    <header class="w-full text-center py-10 px-4 relative z-10">
+        <div class="inline-block px-4 py-1 mb-3 rounded-full bg-neonPurple/30 border border-neonPurple/50 text-neonOrange text-xs font-semibold tracking-widest uppercase backdrop-blur-md">
+            Annual Halloween Masquerade 2026
+        </div>
+        <h1 class="spooky-title text-5xl sm:text-6xl text-neonOrange mb-3">Haunted Night Bash</h1>
+        <p class="text-sm sm:text-base text-gray-200 max-w-md mx-auto drop-shadow-md">
+            Step into the shadows. Secure your spot before the spirits close the gates forever...
+        </p>
+    </header>
+
+    <!-- Main Content / Transparent RSVP & Ticket Flow -->
+    <main class="w-full max-w-md mx-auto px-4 pb-12 relative z-10 flex-grow">
+        <div class="bg-gray-950/60 backdrop-blur-md border border-neonPurple/40 rounded-2xl p-6 spooky-glow">
+            
+            <!-- RSVP Form -->
+            <form id="rsvpForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-neonOrange font-bold mb-1">Your Full Name *</label>
+                    <input type="text" id="fullName" required placeholder="e.g. Victor Van Dort" 
+                        class="w-full px-4 py-3 rounded-xl bg-gray-900/80 border border-purple-900/50 text-white placeholder-gray-400 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple text-sm backdrop-blur-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-neonOrange font-bold mb-1">Email Address *</label>
+                    <input type="email" id="email" required placeholder="victor@underworld.com" 
+                        class="w-full px-4 py-3 rounded-xl bg-gray-900/80 border border-purple-900/50 text-white placeholder-gray-400 focus:outline-none focus:border-neonPurple focus:ring-1 focus:ring-neonPurple text-sm backdrop-blur-sm">
+                </div>
+
+                <!-- Dynamic Additional Guests Container -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs uppercase tracking-wider text-neonOrange font-bold">Add Guests</label>
+                        <button type="button" id="addGuestBtn" class="text-xs text-slimeGreen hover:underline font-semibold flex items-center gap-1">
+                            + Add Another Guest
+                        </button>
+                    </div>
+                    <div id="guestsContainer" class="space-y-2"></div>
+                </div>
+
+                <!-- View Ticket Price / Trigger Modal -->
+                <div class="pt-4">
+                    <button type="button" id="viewPricesBtn" 
+                        class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-neonPurple to-neonOrange text-white font-bold tracking-wide shadow-lg shadow-purple-900/50 hover:opacity-95 active:scale-[0.99] transition-all text-sm uppercase">
+                        View Ticket Prices & Pay 🎟️
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Live RSVP Count Badge -->
+        <div class="mt-6 text-center">
+            <span class="text-xs text-gray-300 bg-gray-900/60 backdrop-blur-md px-4 py-2 rounded-full border border-purple-900/40 shadow-md">
+                👻 <span id="rsvpCount" class="text-neonOrange font-bold">42</span> souls have already secured entry
+            </span>
+        </div>
+    </main>
+
+    <!-- Pricing & Payment Modal -->
+    <div id="pricingModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-gray-950/90 backdrop-blur-xl border border-neonOrange/50 rounded-2xl w-full max-w-sm p-6 relative spooky-glow transform transition-all">
+            
+            <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">&times;</button>
+            
+            <h3 class="spooky-title text-2xl text-neonOrange text-center mb-1">Choose Your Pass</h3>
+            <p class="text-xs text-gray-300 text-center mb-6">Select your ticket category below to proceed with Razorpay.</p>
+
+            <div class="space-y-3">
+                <!-- Single Ticket Option -->
+                <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 hover:border-neonPurple cursor-pointer flex justify-between items-center transition-all select-ticket backdrop-blur-sm" data-type="Single" data-price="499">
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Single Pass 🧟</h4>
+                        <p class="text-xs text-gray-400">1 Entry + 1 Spooky Cocktail</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-neonOrange font-bold text-lg">₹499</span>
+                    </div>
+                </div>
+
+                <!-- Couple Ticket Option -->
+                <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 hover:border-neonPurple cursor-pointer flex justify-between items-center transition-all select-ticket backdrop-blur-sm" data-type="Couple" data-price="899">
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Couple Pass 🧛‍♂️🧛‍♀️</h4>
+                        <p class="text-xs text-gray-400">2 Entries + 2 Spooky Cocktails</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-neonOrange font-bold text-lg">₹899</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <button id="proceedPaymentBtn" disabled 
+                    class="w-full py-3 rounded-xl bg-gray-800 text-gray-500 font-bold text-sm uppercase cursor-not-allowed transition-all">
+                    Pay Now via Razorpay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-xs text-gray-400 relative z-10 border-t border-purple-950/50 bg-black/40 backdrop-blur-sm">
+        &copy; 2026 Haunted Bash. All rights reserved. Beware the full moon. 🌕
+    </footer>
+
+    <!-- Script to Handle Background Audio and Interactions -->
+    <script>
+        const bgMusic = document.getElementById('bgMusic');
+        bgMusic.volume = 0.2; // Set to low background level
+
+        let audioStarted = false;
+
+        function startBackgroundMusic() {
+            if (audioStarted) return;
+            audioStarted = true;
+
+            bgMusic.play().then(() => {
+                console.log("Background audio playing");
+            }).catch(error => {
+                console.log("Autoplay waiting for interaction");
+            });
+        }
+
+        // Automatically start audio on first user interaction anywhere on page
+        document.addEventListener('pointerdown', startBackgroundMusic, { once: true });
+        document.addEventListener('keydown', startBackgroundMusic, { once: true });
+
+        // Dynamic Guest Management
+        const addGuestBtn = document.getElementById('addGuestBtn');
+        const guestsContainer = document.getElementById('guestsContainer');
+
+        addGuestBtn.addEventListener('click', () => {
+            const guestDiv = document.createElement('div');
+            guestDiv.className = 'flex items-center gap-2';
+            guestDiv.innerHTML = `
+                <input type="text" placeholder="Guest Full Name" required
+                    class="flex-grow px-3 py-2.5 rounded-xl bg-gray-900/80 border border-purple-900/50 text-white placeholder-gray-400 focus:outline-none focus:border-neonPurple text-xs guest-name-input backdrop-blur-sm">
+                <button type="button" class="remove-guest text-red-500 hover:text-red-400 p-2 font-bold text-sm">✕</button>
+            `;
+            guestsContainer.appendChild(guestDiv);
+
+            guestDiv.querySelector('.remove-guest').addEventListener('click', () => {
+                guestDiv.remove();
+            });
+        });
+
+        // Modal Controls
+        const viewPricesBtn = document.getElementById('viewPricesBtn');
+        const pricingModal = document.getElementById('pricingModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const rsvpForm = document.getElementById('rsvpForm');
+        
+        let selectedTicketType = null;
+        let selectedPrice = 0;
+
+        viewPricesBtn.addEventListener('click', () => {
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (!fullName || !email) {
+                alert('Please enter your full name and email before viewing ticket prices!');
+                document.getElementById('fullName').focus();
+                return;
+            }
+
+            pricingModal.classList.remove('hidden');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            pricingModal.classList.add('hidden');
+        });
+
+        // Ticket Selection Logic inside Modal
+        const ticketCards = document.querySelectorAll('.select-ticket');
+        const proceedPaymentBtn = document.getElementById('proceedPaymentBtn');
+
+        ticketCards.forEach(card => {
+            card.addEventListener('click', () => {
+                ticketCards.forEach(c => c.classList.remove('border-neonOrange', 'bg-purple-950/40'));
+                card.classList.add('border-neonOrange', 'bg-purple-950/40');
+                
+                selectedTicketType = card.getAttribute('data-type');
+                selectedPrice = parseInt(card.getAttribute('data-price'));
+
+                proceedPaymentBtn.disabled = false;
+                proceedPaymentBtn.classList.remove('bg-gray-800', 'text-gray-500', 'cursor-not-allowed');
+                proceedPaymentBtn.classList.add('bg-slimeGreen', 'text-gray-955', 'hover:opacity-90', 'cursor-pointer');
+                proceedPaymentBtn.innerText = `Pay ₹${selectedPrice} for ${selectedTicketType} Pass`;
+            });
+        });
+
+        // Razorpay Integration Trigger
+        proceedPaymentBtn.addEventListener('click', () => {
+            if (!selectedTicketType) return;
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const guestInputs = document.querySelectorAll('.guest-name-input');
+            const guestNames = Array.from(guestInputs).map(input => input.value.trim()).filter(Boolean);
+
+            const options = {
+                "key": "YOUR_RAZORPAY_KEY_ID", 
+                "amount": selectedPrice * 100,
+                "currency": "INR",
+                "name": "Haunted Night Bash 2026",
+                "description": `${selectedTicketType} Ticket RSVP`,
+                "handler": function (response) {
+                    alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}\n\nSee you at the party, ${fullName}! 🎃`);
+                    pricingModal.classList.add('hidden');
+                    rsvpForm.reset();
+                    guestsContainer.innerHTML = '';
+                    proceedPaymentBtn.disabled = true;
+                    proceedPaymentBtn.classList.add('bg-gray-800', 'text-gray-500', 'cursor-not-allowed');
+                    proceedPaymentBtn.classList.remove('bg-slimeGreen', 'text-gray-950');
+                    selectedTicketType = null;
+                },
+                "prefill": {
+                    "name": fullName,
+                    "email": email
+                },
+                "notes": {
+                    "ticket_type": selectedTicketType,
+                    "additional_guests": guestNames.join(', ')
+                },
+                "theme": {
+                    "color": "#9333ea"
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.open();
+        });
+    </script>
+</body>
+</html>
